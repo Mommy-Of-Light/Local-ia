@@ -36,7 +36,7 @@ Before using Local Agent, you need:
 
 ## 1. Download Local Agent
 
-1. Open the [Releases](../../releases) page.
+1. Open the [Releases](https://github.com/Mommy-Of-Light/Local-ia/releases/latest) page.
 2. Download the latest Windows executable.
 3. Create a folder for the application, for example:
 
@@ -337,7 +337,7 @@ In `chat_data.json`, located beside the executable.
 - [Ollama Website](https://ollama.com/)
 - [Download Ollama for Windows](https://ollama.com/download/windows)
 - [Ollama Model Library](https://ollama.com/library)
-- [Local Agent Releases](../../releases)
+- [Local Agent Releases](https://github.com/Mommy-Of-Light/Local-ia/releases/latest)
 
 ---
 
