@@ -4,3 +4,5 @@ ignore_rules.txt
 Version_History/
 
 local-code.exe
+
+image-generator-config/
