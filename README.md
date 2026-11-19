@@ -1,8 +1,8 @@
 # Ollama Local Agent UI
 
-A local AI-powered coding assistant for Windows, powered by [Ollama](https://ollama.com/) and local language models.
+A local AI-powered coding and image-generation assistant for Windows, powered by [Ollama](https://ollama.com/) and local AI models.
 
-Local Agent allows you to work with your code projects using an AI assistant running locally on your computer. It can inspect project files, help you understand code, and perform coding-related tasks using its available project tools.
+Local Agent allows you to work with your code projects using an AI assistant running locally on your computer. It can inspect project files, help you understand code, perform coding-related tasks, and optionally generate images using locally hosted image-generation models.
 
 The application is distributed as a standalone Windows executable. **You do not need Python or the source code to use it.**
 
@@ -14,21 +14,44 @@ The application is distributed as a standalone Windows executable. **You do not 
 - **Code assistance:** Ask questions about your projects and get coding help.
 - **Project awareness:** Work with files inside your selected project.
 - **File operations:** Use the available project tools to inspect and modify files.
+- **AI image generation:** Optionally generate images locally using Z-Image Turbo through xOllama.
+- **Image display:** View generated images directly inside the chat.
+- **Image storage:** Save generated images inside your project folder.
 - **Chat history:** Keep conversations organized.
 - **Projects and groups:** Organize your chats.
 - **Ignore rules:** Control which files and folders the agent should ignore.
 - **Windows application:** No Python installation required.
 
+---
+
 ## Requirements
 
-Before using Local Agent, you need:
+### Required for coding and chat
 
 - Windows 10 or Windows 11 (64-bit).
-- An internet connection for downloading Ollama and AI models.
 - [Ollama](https://ollama.com/download/windows).
-- Enough VRAM (GPU memory) and disk space for your chosen AI model.
+- Enough RAM, VRAM, and disk space for your chosen language model.
 
-**Important:** The executable does not include Ollama or any AI models. These must be installed separately.
+### Optional: Image generation
+
+If you want to use the image-generation feature, you will also need:
+
+- xOllama.
+- The Z-Image Turbo model.
+- Compatible image-generation engine.
+- Sufficient GPU memory and system resources.
+
+**Important:** Image generation is entirely optional. You do not need xOllama or an image-generation model to use Local Agent for coding and chat.
+
+The Local Agent executable does not include Ollama, xOllama, or AI model weights. These are installed separately according to the features you want to use.
+
+| Software | Required? | Purpose |
+|---|---|---|
+| Local Agent | Yes | Main application |
+| Ollama | Yes | Chat and coding assistance |
+| Language model | Yes | Powers the AI assistant |
+| xOllama | Optional | Image generation |
+| Z-Image Turbo | Optional | Generates images |
 
 ---
 
@@ -47,11 +70,11 @@ Before using Local Agent, you need:
 
 You do not need to install Python, PyInstaller, or any development tools.
 
-> **Tip:** Keep the application in a folder where your Windows account has permission to write files. Avoid placing it inside `C:\Program Files`.
+> **Tip:** Keep the application in a folder where your Windows account has permission to write files. Avoid placing it inside `C:\Program Files\`.
 
 ## 2. Install Ollama
 
-Local Agent uses Ollama to communicate with locally running AI models.
+Local Agent uses Ollama to communicate with locally running language models.
 
 1. Visit the official Ollama website:
 
@@ -100,9 +123,59 @@ Type `/bye` to exit the model conversation.
 
 ---
 
-# Choosing other AI models
+# Optional: Install Image Generation
 
-You are not limited to one model. Ollama supports many locally running models.
+You can skip this entire section if you only want to use Local Agent for coding and chat.
+
+Local Agent supports local image generation using Z-Image Turbo through xOllama.
+
+Image generation runs separately from the coding assistant. Installing xOllama does not replace Ollama.
+
+## 1. Install xOllama
+
+1. Visit the xOllama project:
+
+   [xollama - latest](https://github.com/mann1x/xollama/releases/latest)
+
+2. Download the compatible Windows version.
+3. Install xOllama.
+4. Make sure the installed image-generation engine supports Z-Image Turbo.
+
+**Important:** Not every xOllama release includes an engine capable of running Z-Image Turbo. Use an image-capable engine version that supports the model.
+
+## 2. Download Z-Image Turbo
+
+Follow the model installation instructions provided by xOllama.
+
+Model information:
+
+https://ollama.com/mannix/z-image:turbo
+
+The model requires a compatible image-generation engine.
+
+## 3. Verify the image-generation service
+
+Local Agent communicates with the xOllama image-generation API at:
+
+```text
+http://localhost:22434/v1/images/generations
+```
+
+You can check whether the API is responding by running:
+
+```powershell
+Invoke-RestMethod http://localhost:22434/v1/models
+```
+
+If the service responds, xOllama is available.
+
+Once everything is installed and running, you can use the image-generation button inside Local Agent.
+
+---
+
+# Choosing Other AI Models
+
+You are not limited to one model. Ollama supports many locally running language models.
 
 Browse available models here:
 
@@ -132,7 +205,7 @@ To remove a model you no longer need:
 ollama rm MODEL_NAME
 ```
 
-### Which model should I use?
+## Which model should I use?
 
 | Model size | General recommendation |
 |---|---|
@@ -152,7 +225,9 @@ Actual performance depends on your hardware, model architecture, and available m
 
 Launch the downloaded executable.
 
-Make sure Ollama is installed and running before using the assistant.
+Make sure Ollama is installed and running before using the coding assistant.
+
+If you have installed the optional image-generation service, make sure xOllama is also running when you want to generate images.
 
 ## 2. Select a project
 
@@ -186,30 +261,46 @@ Help me refactor the database connection code.
 Add error handling to the configuration loader.
 ```
 
-## 4. Review tool activity
+## 4. Generate images (Optional)
+
+If you have installed and configured xOllama and Z-Image Turbo, you can use the image-generation button to create images from text descriptions.
+
+For example:
+
+```text
+Create a futuristic city at night with neon lights,
+cinematic lighting, and highly detailed architecture.
+```
+
+The generated image appears directly in the conversation and is saved inside the selected project's `generated_images` folder.
+
+If you have not installed xOllama, you can simply ignore the image-generation feature and continue using Local Agent for coding and chat.
+
+## 5. Review tool activity
 
 When the assistant uses project tools, you can inspect the tool activity and its results in the Tool Details panel.
 
 Review the proposed operations and their results when working with important files.
 
-## 5. Organize conversations
+## 6. Organize conversations
 
 Use chats, groups, and projects to keep your conversations organized.
 
 ---
 
-# Application data
+# Application Data
 
 Local Agent stores its persistent application data in the folder containing the executable.
 
 Depending on your usage, this includes:
 
-| File | Purpose |
+| File or folder | Purpose |
 |---|---|
 | `chat_data.json` | Stores chat and conversation data |
 | `ignore_rules.txt` | Stores file and folder ignore rules |
+| `generated_images/` | Stores generated images inside individual project folders |
 
-**Important:** Back up these files if you want to preserve your conversations and settings when moving or replacing the executable.
+**Important:** Back up these files and folders if you want to preserve your conversations, settings, and generated images when moving or replacing the executable.
 
 Do not delete these files unless you intend to remove the associated application data.
 
@@ -226,8 +317,6 @@ Open PowerShell and execute:
 ```powershell
 ollama list
 ```
-
-If the command works, Ollama is installed.
 
 You can also check whether its local API is responding:
 
@@ -252,6 +341,39 @@ ollama list
 ```
 
 Make sure the model name matches the model configured in Local Agent.
+
+## Image generation is not working
+
+This section only applies if you have installed the optional image-generation components.
+
+Make sure:
+
+- xOllama is installed and running.
+- The image-generation engine supports Z-Image Turbo.
+- Z-Image Turbo is installed and available.
+- The local image API is responding.
+
+Check the API:
+
+```powershell
+Invoke-RestMethod http://localhost:22434/v1/models
+```
+
+If the API is unavailable, check your xOllama installation and engine configuration.
+
+## Image generation is slow
+
+Image-generation performance depends heavily on your hardware.
+
+Try:
+
+- Closing other memory-intensive applications.
+- Closing applications using your GPU.
+- Making sure sufficient system RAM and VRAM are available.
+- Checking that your NVIDIA GPU is being used.
+- Using a supported image-generation engine.
+
+Image generation may take several minutes on less powerful hardware.
 
 ## The application closes immediately
 
@@ -294,13 +416,17 @@ Only run the application if you downloaded it from this project's official GitHu
 
 # Privacy
 
-Local Agent is designed to work with locally hosted AI models through Ollama.
+Local Agent is designed to work with locally hosted AI models.
 
-- Model inference is performed locally by Ollama.
+- Language-model inference is performed locally through Ollama.
+- Optional image generation is performed locally through xOllama.
 - Your model files are stored on your computer.
-- The application communicates with Ollama through its local API.
+- Generated images are stored in your project folders.
+- The application communicates with the local runtimes through their local APIs.
 
-An internet connection is required to download Ollama and models. Other network activity may depend on the software and services you use.
+An internet connection is required to download Ollama, optional xOllama components, and AI models.
+
+Other network activity may depend on the software and services you use.
 
 ---
 
@@ -312,15 +438,27 @@ No. The distributed Windows executable is intended to run without a Python insta
 
 ### Do I need to install Ollama?
 
-Yes. Ollama is required to run the local AI model.
+Yes. Ollama is required to run the local language models used for chat and coding.
+
+### Do I need xOllama?
+
+No. xOllama is completely optional.
+
+You only need it if you want to use the image-generation functionality.
+
+### Can I use Local Agent without image generation?
+
+Yes. You only need Local Agent, Ollama, and a compatible language model for coding and chat.
 
 ### Are AI models included in the executable?
 
-No. Download models separately using Ollama.
+No. Download models separately using the appropriate runtime.
 
 ### Does the application require an internet connection?
 
-An internet connection is needed to download Ollama and AI models. Once installed, local model inference can work without an internet connection.
+An internet connection is needed to download Ollama and AI models.
+
+Once installed, local model inference and image generation can work without an internet connection.
 
 ### Can I use models other than Qwen?
 
@@ -330,6 +468,14 @@ Yes, provided the model is supported by Ollama and configured correctly in the a
 
 In `chat_data.json`, located beside the executable.
 
+### Where are generated images saved?
+
+Generated images are saved in the `generated_images` folder inside the selected project.
+
+### Does image generation use a cloud service?
+
+No. Z-Image Turbo runs locally through xOllama on your computer.
+
 ---
 
 # Links
@@ -337,10 +483,12 @@ In `chat_data.json`, located beside the executable.
 - [Ollama Website](https://ollama.com/)
 - [Download Ollama for Windows](https://ollama.com/download/windows)
 - [Ollama Model Library](https://ollama.com/library)
+- [xOllama GitHub](https://github.com/mann1x/xollama/releases/latest)
+- [Z-Image Turbo Model](https://ollama.com/mannix/z-image:turbo)
 - [Local Agent Releases](https://github.com/Mommy-Of-Light/Local-ia/releases/latest)
 
 ---
 
 <p align="center">
-  Built for local AI-powered coding assistance.
+  Built for local AI-powered coding and image generation.
 </p>
